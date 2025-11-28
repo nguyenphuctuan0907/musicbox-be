@@ -1,0 +1,118 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model User {
+  id        Int        @id @default(autoincrement())
+  username  String
+  role      String?
+  createdAt DateTime   @default(now())
+  Bills     Bill[]     @relation("UserBills")
+  Discounts Discount[] @relation("DiscountsCreated")
+}
+
+model Box {
+  id                  Int                @id @default(autoincrement())
+  name                String
+  defaultPricePerHour Int // VND per hour fallback
+  createdAt           DateTime           @default(now())
+  PriceIntervals      BoxPriceInterval[]
+  Bills               Bill[]
+}
+
+model BoxPriceInterval {
+  id           Int       @id @default(autoincrement())
+  boxId        Int
+  box          Box       @relation(fields: [boxId], references: [id])
+  name         String? // Sáng / Chiều / Tối
+  pricePerHour Int
+  startTime    String // "HH:MM:SS"
+  endTime      String // "HH:MM:SS", end_time <= start_time => goes overnight
+  daysOfWeek   String? // "0,1,2" (0=Sunday) or "*" for all
+  startDate    DateTime? // seasonal window optional
+  endDate      DateTime?
+  priority     Int       @default(0)
+  active       Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+}
+
+model Dish {
+  id         Int        @id @default(autoincrement())
+  name       String
+  price      Int
+  createdAt  DateTime   @default(now())
+  BillDishes BillDish[]
+}
+
+model Bill {
+  id              Int       @id @default(autoincrement())
+  start           DateTime
+  end             DateTime?
+  boxId           Int
+  box             Box       @relation(fields: [boxId], references: [id])
+  creatorId       Int
+  creator         User      @relation(fields: [creatorId], references: [id], name: "UserBills")
+  subtotal        Int // box + dishes before discounts
+  discountAmount  Int       @default(0)
+  discountPercent Float? // optional store chosen %
+  total           Int
+  status          String    @default("draft")
+  createdAt       DateTime  @default(now())
+
+  BillDishes    BillDish[]
+  BillDiscounts BillDiscount[]
+  BoxSegments   BillBoxSegment[]
+}
+
+model BillDish {
+  id       Int  @id @default(autoincrement())
+  billId   Int
+  bill     Bill @relation(fields: [billId], references: [id])
+  dishId   Int
+  dish     Dish @relation(fields: [dishId], references: [id])
+  quantity Int
+}
+
+model Discount {
+  id            Int            @id @default(autoincrement())
+  code          String? // optional coupon code
+  name          String?
+  type          String // 'fixed' | 'percent' | 'hourly'
+  value         Float // fixed = VND, percent = 10.5, hourly = VND per hour
+  maxAmount     Int?
+  startsAt      DateTime?
+  endsAt        DateTime?
+  active        Boolean        @default(true)
+  appliesTo     String? // 'box'|'dishes'|'bill'|'both'
+  createdBy     Int?
+  creator       User?          @relation(fields: [createdBy], references: [id], name: "DiscountsCreated")
+  createdAt     DateTime       @default(now())
+  BillDiscounts BillDiscount[]
+}
+
+model BillDiscount {
+  id            Int       @id @default(autoincrement())
+  billId        Int
+  bill          Bill      @relation(fields: [billId], references: [id])
+  discountId    Int?
+  discount      Discount? @relation(fields: [discountId], references: [id])
+  appliedAmount Int
+  note          String?
+  createdAt     DateTime  @default(now())
+}
+
+model BillBoxSegment {
+  id            Int      @id @default(autoincrement())
+  billId        Int
+  bill          Bill     @relation(fields: [billId], references: [id])
+  segmentStart  DateTime
+  segmentEnd    DateTime
+  pricePerHour  Int
+  billedMinutes Int // store billed minutes for reproducibility
+  amount        Int // VND for this segment
+  priceSource   String? // e.g. 'Sáng','Chiều','default'
+}
