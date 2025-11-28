@@ -6,113 +6,118 @@ datasource db {
   provider = "mysql"
 }
 
-model User {
-  id        Int        @id @default(autoincrement())
-  username  String
-  role      String?
-  createdAt DateTime   @default(now())
-  Bills     Bill[]     @relation("UserBills")
-  Discounts Discount[] @relation("DiscountsCreated")
+model bill {
+  id              Int            @id @default(autoincrement())
+  start           DateTime
+  end             DateTime?
+  boxId           Int
+  creatorId       Int
+  subtotal        Int
+  discountAmount  Int            @default(0)
+  discountPercent Float?
+  total           Int
+  status          String         @default("draft")
+  createdAt       DateTime       @default(now())
+  box             box            @relation(fields: [boxId], references: [id], map: "Bill_boxId_fkey")
+  user            user           @relation(fields: [creatorId], references: [id], map: "Bill_creatorId_fkey")
+  billdiscount    billdiscount[]
+  billdish        billdish[]
+
+  @@index([boxId], map: "Bill_boxId_fkey")
+  @@index([creatorId], map: "Bill_creatorId_fkey")
 }
 
-model Box {
+model billdiscount {
+  id            Int       @id @default(autoincrement())
+  billId        Int
+  discountId    Int?
+  appliedAmount Int
+  note          String?
+  createdAt     DateTime  @default(now())
+  bill          bill      @relation(fields: [billId], references: [id], map: "BillDiscount_billId_fkey")
+  discount      discount? @relation(fields: [discountId], references: [id], map: "BillDiscount_discountId_fkey")
+
+  @@index([billId], map: "BillDiscount_billId_fkey")
+  @@index([discountId], map: "BillDiscount_discountId_fkey")
+}
+
+model billdish {
+  id       Int  @id @default(autoincrement())
+  billId   Int
+  dishId   Int
+  quantity Int
+  bill     bill @relation(fields: [billId], references: [id], map: "BillDish_billId_fkey")
+  dish     dish @relation(fields: [dishId], references: [id], map: "BillDish_dishId_fkey")
+
+  @@index([billId], map: "BillDish_billId_fkey")
+  @@index([dishId], map: "BillDish_dishId_fkey")
+}
+
+model box {
   id                  Int                @id @default(autoincrement())
   name                String
-  defaultPricePerHour Int // VND per hour fallback
+  defaultPricePerHour Int
   createdAt           DateTime           @default(now())
-  PriceIntervals      BoxPriceInterval[]
-  Bills               Bill[]
+  bill                bill[]
+  boxpriceinterval    boxpriceinterval[]
 }
 
-model BoxPriceInterval {
+model boxpriceinterval {
   id           Int       @id @default(autoincrement())
   boxId        Int
-  box          Box       @relation(fields: [boxId], references: [id])
-  name         String? // Sáng / Chiều / Tối
+  name         String?
   pricePerHour Int
-  startTime    String // "HH:MM:SS"
-  endTime      String // "HH:MM:SS", end_time <= start_time => goes overnight
-  daysOfWeek   String? // "0,1,2" (0=Sunday) or "*" for all
-  startDate    DateTime? // seasonal window optional
+  startTime    String
+  endTime      String
+  daysOfWeek   String?
+  startDate    DateTime?
   endDate      DateTime?
   priority     Int       @default(0)
   active       Boolean   @default(true)
   createdAt    DateTime  @default(now())
+  box          box       @relation(fields: [boxId], references: [id], map: "BoxPriceInterval_boxId_fkey")
+
+  @@index([boxId], map: "BoxPriceInterval_boxId_fkey")
 }
 
-model Dish {
-  id         Int        @id @default(autoincrement())
-  name       String
-  price      Int
-  createdAt  DateTime   @default(now())
-  BillDishes BillDish[]
+model discount {
+  id           Int            @id @default(autoincrement())
+  code         String?
+  name         String?
+  type         String
+  value        Float
+  maxAmount    Int?
+  startsAt     DateTime?
+  endsAt       DateTime?
+  active       Boolean        @default(true)
+  appliesTo    String?
+  createdBy    Int?
+  createdAt    DateTime       @default(now())
+  billdiscount billdiscount[]
+  user         user?          @relation(fields: [createdBy], references: [id], map: "Discount_createdBy_fkey")
+
+  @@index([createdBy], map: "Discount_createdBy_fkey")
 }
 
-model Bill {
-  id              Int       @id @default(autoincrement())
-  start           DateTime
-  end             DateTime?
-  boxId           Int
-  box             Box       @relation(fields: [boxId], references: [id])
-  creatorId       Int
-  creator         User      @relation(fields: [creatorId], references: [id], name: "UserBills")
-  subtotal        Int // box + dishes before discounts
-  discountAmount  Int       @default(0)
-  discountPercent Float? // optional store chosen %
-  total           Int
-  status          String    @default("draft")
-  createdAt       DateTime  @default(now())
-
-  BillDishes    BillDish[]
-  BillDiscounts BillDiscount[]
-  BoxSegments   BillBoxSegment[]
+model dish {
+  id        Int        @id @default(autoincrement())
+  name      String
+  price     Int
+  createdAt DateTime   @default(now())
+  billdish  billdish[]
 }
 
-model BillDish {
-  id       Int  @id @default(autoincrement())
-  billId   Int
-  bill     Bill @relation(fields: [billId], references: [id])
-  dishId   Int
-  dish     Dish @relation(fields: [dishId], references: [id])
-  quantity Int
+model user {
+  id        Int        @id @default(autoincrement())
+  username  String
+  role      user_role?
+  createdAt DateTime   @default(now())
+  password  String
+  bill      bill[]
+  discount  discount[]
 }
 
-model Discount {
-  id            Int            @id @default(autoincrement())
-  code          String? // optional coupon code
-  name          String?
-  type          String // 'fixed' | 'percent' | 'hourly'
-  value         Float // fixed = VND, percent = 10.5, hourly = VND per hour
-  maxAmount     Int?
-  startsAt      DateTime?
-  endsAt        DateTime?
-  active        Boolean        @default(true)
-  appliesTo     String? // 'box'|'dishes'|'bill'|'both'
-  createdBy     Int?
-  creator       User?          @relation(fields: [createdBy], references: [id], name: "DiscountsCreated")
-  createdAt     DateTime       @default(now())
-  BillDiscounts BillDiscount[]
-}
-
-model BillDiscount {
-  id            Int       @id @default(autoincrement())
-  billId        Int
-  bill          Bill      @relation(fields: [billId], references: [id])
-  discountId    Int?
-  discount      Discount? @relation(fields: [discountId], references: [id])
-  appliedAmount Int
-  note          String?
-  createdAt     DateTime  @default(now())
-}
-
-model BillBoxSegment {
-  id            Int      @id @default(autoincrement())
-  billId        Int
-  bill          Bill     @relation(fields: [billId], references: [id])
-  segmentStart  DateTime
-  segmentEnd    DateTime
-  pricePerHour  Int
-  billedMinutes Int // store billed minutes for reproducibility
-  amount        Int // VND for this segment
-  priceSource   String? // e.g. 'Sáng','Chiều','default'
+enum user_role {
+  ADMIN
+  USER
 }
