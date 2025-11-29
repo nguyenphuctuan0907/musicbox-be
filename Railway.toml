@@ -1,2 +1,6 @@
 [build]
 command = "npm install && npm run build"
+
+[run]
+# Thêm lệnh này để chạy ứng dụng sau khi nó đã được build thành công
+command = "npm run start:prod"
