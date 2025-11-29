@@ -1,7 +1,0 @@
-[build]
-# Thêm bước chạy `prisma generate` vào build command
-command = "npm install && npx prisma generate && npm run build"
-
-[run]
-# Dùng lệnh chạy rõ ràng
-command = "node dist/main"
