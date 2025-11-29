@@ -1,23 +1,24 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ChatGateway } from './chat.gateway';
 import { PrismaModule } from 'prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
+import { BoxModule } from './box/box.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ['../.env', '.env'],
+      envFilePath: ['.env'],
     }),
     PrismaModule,
     AuthModule,
     UsersModule,
+    BoxModule,
   ],
   controllers: [AppController],
-  providers: [ChatGateway, AppService],
+  providers: [AppService],
 })
 export class AppModule {}
