@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { AppError } from 'libs/error/base.error';
 import { PrismaService } from 'prisma/prisma.service';
 
 @Injectable()
@@ -14,8 +15,12 @@ export class AuthService {
       where: { username },
     });
 
+    if (!user) {
+      throw new AppError('Username không tồn tại!', '404');
+    }
+
     if (user?.password !== password) {
-      throw new UnauthorizedException();
+      throw new AppError('Mật khẩu không đúng!', '401');
     }
 
     const payload = { id: user.id, username: user.username, role: user.role };
