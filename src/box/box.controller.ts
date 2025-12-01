@@ -7,6 +7,6 @@ export class BoxController {
 
   @Get()
   getAllBoxes() {
-    return this.boxService.getAllBoxes();
+    return this.boxService.getAll();
   }
 }
