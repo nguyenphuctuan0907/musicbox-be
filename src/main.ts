@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { AppLogger } from 'libs/log/logger';
 import { NestApplicationOptions } from '@nestjs/common/interfaces';
+import { AllExceptionsFilter } from 'libs/filter/exception.filter';
 
 async function bootstrap() {
   const logger = new AppLogger();
@@ -13,7 +15,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, nestAppOpt);
   app.enableCors();
   app.setGlobalPrefix('api');
-  await app.listen(process.env.PORT ?? 3000);
+  app.useGlobalFilters(new AllExceptionsFilter());
+  await app.listen(process.env.PORT ?? 3000).then(async () => {
+    logger.log('Application is running on: ' + (await app.getUrl()));
+  });
 }
 
 bootstrap();

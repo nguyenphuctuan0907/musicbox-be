@@ -1,13 +1,7 @@
-import { ApolloError } from 'apollo-server-errors';
+import { HttpException } from '@nestjs/common';
 
-export class AppError extends ApolloError {
-  constructor(
-    message: string,
-
-    code?: string,
-
-    extensions?: Record<string, any>,
-  ) {
-    super(message, code, extensions);
+export class AppError extends HttpException {
+  constructor(message: string, code?: number) {
+    super(message, code ?? 400);
   }
 }

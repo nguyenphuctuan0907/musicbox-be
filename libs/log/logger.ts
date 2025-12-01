@@ -1,56 +1,43 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable prefer-rest-params */
+/* eslint-disable prefer-spread */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { ConsoleLogger } from '@nestjs/common';
 import { ConsoleLoggerOptions } from '@nestjs/common/services/console-logger.service';
 import { getLog } from 'nestjs-log';
 
-/**
- * Custom logger: log ra console + file
- */
 export class AppLogger extends ConsoleLogger {
-  private fileLogger: any;
+  fileLogger: any;
 
   constructor(context?: string, options?: ConsoleLoggerOptions) {
-    super(context ?? '', options ?? ({} as ConsoleLoggerOptions));
-    // this.setLogLevels(['error']);
+    super(context ?? 'AppLogger', options ?? {});
     this.fileLogger = getLog(context ?? 'app');
   }
 
-  /**
-   * LOG
-   */
   log(message: any, context?: string) {
-    super.log(message, context);
-    this.fileLogger.info(message, context);
+    super.log.apply(this, arguments);
+    this.fileLogger.info.apply(this.fileLogger, arguments);
   }
 
-  /**
-   * ERROR
-   */
   error(message: any, stack?: string, context?: string) {
-    super.error(message, stack, context);
-    this.fileLogger.error(message, stack, context);
+    super.error.apply(this, arguments);
+    this.fileLogger.error.apply(this.fileLogger, arguments);
   }
 
-  /**
-   * WARN
-   */
   warn(message: any, context?: string) {
-    super.warn(message, context);
-    this.fileLogger.warn(message, context);
+    super.warn.apply(this, arguments);
+    this.fileLogger.warn.apply(this.fileLogger, arguments);
   }
 
-  /**
-   * DEBUG
-   */
   debug(message: any, context?: string) {
-    super.debug(message, context);
-    this.fileLogger.debug(message, context);
+    super.debug.apply(this, arguments);
+    this.fileLogger.debug.apply(this.fileLogger, arguments);
   }
 
-  /**
-   * VERBOSE
-   */
   verbose(message: any, context?: string) {
-    super.verbose(message, context);
-    this.fileLogger.verbose(message, context);
+    super.verbose.apply(this, arguments);
+    this.fileLogger.verbose.apply(this.fileLogger, arguments);
   }
 }
