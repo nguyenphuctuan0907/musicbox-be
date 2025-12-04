@@ -10,8 +10,8 @@ datasource db {
 
 model bill {
   id              Int            @id @default(autoincrement())
-  start           Int
-  end             Int?
+  start           DateTime
+  end             DateTime?
   boxId           Int
   creatorId       Int
   subtotal        Int

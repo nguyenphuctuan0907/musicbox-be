@@ -17,7 +17,7 @@ export class BillsService {
   }) {
     const bill = await this.prisma.bill.create({
       data: {
-        start: Date.now(),
+        start: new Date(),
         boxId: data.boxId,
         creatorId: data.creatorId,
         subtotal: data.subtotal,
@@ -31,18 +31,15 @@ export class BillsService {
   }
 
   async getBill(boxId: number) {
-    const bill = await this.prisma.bill.findFirst({
+    return this.prisma.bill.findFirst({
       where: {
         status: 'draft',
         boxId: boxId,
       },
     });
+  }
 
-    if (!bill) {
-      this.logger.debug(`No open bill found for box ${boxId}`);
-      throw new AppError('No open bill found for the specified box.', 404);
-    }
-
-    return bill;
+  async updateBill(data) {
+    return this.prisma.bill.update(data);
   }
 }

@@ -10,6 +10,7 @@ import {
 import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
 import { BoxService } from './box.service';
+import { AppError } from 'libs/error/base.error';
 
 @WebSocketGateway({
   cors: { origin: '*' },
@@ -25,7 +26,6 @@ export class BoxGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   handleConnection(client: Socket) {
     this.logger.log(`Client connected: ${client.id}`);
-    // optionally auth here
   }
 
   handleDisconnect(client: Socket) {
@@ -33,7 +33,7 @@ export class BoxGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('room:heartbeat')
-  handleRoomHeartbeat(@MessageBody() payload: any, client: Socket) {
+  async handleRoomHeartbeat(@MessageBody() payload: any, client: Socket) {
     // validate payload minimally
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (!payload || !payload.boxId) {
@@ -42,15 +42,16 @@ export class BoxGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     // update lastSeen
-    const saved = this.boxService.upsertStatus(payload);
+    const saved = await this.boxService.upsertStatus(payload);
 
+    if (!saved) {
+      throw new AppError('Failed to upsert room status', 400);
+    }
+
+    setInterval(() => {
+      this.server.emit('room:status:update', saved);
+      this.logger.log('Emit new data: ', saved);
+    }, 60 * 1000);
     // broadcast update to interested clients (e.g., admins)
-    this.server.emit('room:status:update', saved);
-
-    // optional: ack to sender
-    client.emit('room:heartbeat:ack', {
-      ok: true,
-      ts: new Date().toISOString(),
-    });
   }
 }
