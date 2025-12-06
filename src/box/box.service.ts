@@ -30,7 +30,7 @@ export class BoxService {
 
   async createBox(data: CreateBoxDto) {
     try {
-      this.logger.debug('Creating new box!');
+      this.logger.log('Creating new box!');
 
       if (!data) {
         throw new AppError('No data provided for creating box', 400);
