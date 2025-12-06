@@ -52,6 +52,8 @@ export class BoxGateway implements OnGatewayConnection, OnGatewayDisconnect {
       this.server.emit('room:status:update', saved);
       this.logger.log('Emit new data: ', saved);
     }, 60 * 1000);
+
     // broadcast update to interested clients (e.g., admins)
+    client.broadcast.emit('room:status:update', saved);
   }
 }
