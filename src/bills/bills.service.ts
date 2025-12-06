@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { BillStatus } from 'generated/prisma/enums';
 import { AppError } from 'libs/error/base.error';
 import { AppLogger } from 'libs/log/logger';
 import { PrismaService } from 'prisma/prisma.service';
@@ -23,7 +24,6 @@ export class BillsService {
         subtotal: data.subtotal,
         discountAmount: data.discountAmount,
         total: data.total,
-        status: 'draft',
       },
     });
 
@@ -33,7 +33,7 @@ export class BillsService {
   async getBill(boxId: number) {
     return this.prisma.bill.findFirst({
       where: {
-        status: 'draft',
+        status: BillStatus.DRAFT,
         boxId: boxId,
       },
     });

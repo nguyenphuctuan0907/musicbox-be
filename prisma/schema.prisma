@@ -8,118 +8,119 @@ datasource db {
   provider = "mysql"
 }
 
-model bill {
-  id              Int            @id @default(autoincrement())
-  start           DateTime
-  end             DateTime?
-  boxId           Int
-  creatorId       Int
-  subtotal        Int
-  discountAmount  Int            @default(0)
-  discountPercent Float?
-  total           Int
-  status          String         @default("draft")
-  createdAt       DateTime       @default(now())
-  box             box            @relation(fields: [boxId], references: [id], map: "Bill_boxId_fkey")
-  user            user           @relation(fields: [creatorId], references: [id], map: "Bill_creatorId_fkey")
-  billdiscount    billdiscount[]
-  billdish        billdish[]
+model Bill {
+  id              Int        @id @default(autoincrement())
+  start           DateTime // thời gian bắt đầu tạo bill
+  end             DateTime? // thời gian kết thúc bill
+  boxId           Int        @map("box_id")
+  creatorId       Int        @map("creator_id")
+  timeUsed        Int        @default(0) @map("time_used") // thời gian sử dụng tính bằng phút
+  subtotal        Int // tiền trước khi giảm giá
+  discountAmount  Int        @default(0) @map("discount_amount") // tiền giảm giá
+  discountPercent Float?     @map("discount_percent") // phần trăm giảm giá
+  total           Int // tiền khách phải trả
+  status          BillStatus @default(DRAFT) // trạng thái bill
+  createdAt       DateTime   @default(now()) @map("created_at")
+  box             Box        @relation(fields: [boxId], references: [id], map: "Bill_boxId_fkey")
+  user            User       @relation(fields: [creatorId], references: [id], map: "Bill_creatorId_fkey")
+  discountType    Int?
+
+  billdish BillDish[]
 
   @@index([boxId], map: "Bill_boxId_fkey")
   @@index([creatorId], map: "Bill_creatorId_fkey")
 }
 
-model billdiscount {
-  id            Int       @id @default(autoincrement())
-  billId        Int
-  discountId    Int?
-  appliedAmount Int
-  note          String?
-  createdAt     DateTime  @default(now())
-  bill          bill      @relation(fields: [billId], references: [id], map: "BillDiscount_billId_fkey")
-  discount      discount? @relation(fields: [discountId], references: [id], map: "BillDiscount_discountId_fkey")
-
-  @@index([billId], map: "BillDiscount_billId_fkey")
-  @@index([discountId], map: "BillDiscount_discountId_fkey")
-}
-
-model billdish {
+model BillDish {
   id       Int  @id @default(autoincrement())
-  billId   Int
-  dishId   Int
-  quantity Int
-  bill     bill @relation(fields: [billId], references: [id], map: "BillDish_billId_fkey")
-  dish     dish @relation(fields: [dishId], references: [id], map: "BillDish_dishId_fkey")
+  billId   Int  @map("bill_id")
+  dishId   Int  @map("dish_id")
+  quantity Int // số lượng của món
+  bill     Bill @relation(fields: [billId], references: [id], map: "BillDish_billId_fkey")
+  dish     Dish @relation(fields: [dishId], references: [id], map: "BillDish_dishId_fkey")
 
   @@index([billId], map: "BillDish_billId_fkey")
   @@index([dishId], map: "BillDish_dishId_fkey")
 }
 
-model box {
+model Box {
   id                  Int                @id @default(autoincrement())
-  name                String
-  defaultPricePerHour Int
-  createdAt           DateTime           @default(now())
-  bill                bill[]
-  boxpriceinterval    boxpriceinterval[]
+  name                String // tên phòng/box
+  defaultPricePerHour Int                @map("default_price_per_hour") // tiền mặc định
+  size                BoxSize
+  status              Boolean            @default(true)
+  createdAt           DateTime           @default(now()) @map("created_at")
+  bill                Bill[]
+  boxPriceInterval    BoxPriceInterval[]
 }
 
-model boxpriceinterval {
-  id           Int       @id @default(autoincrement())
-  boxId        Int
+model BoxPriceInterval {
+  id           Int      @id @default(autoincrement())
+  boxId        Int      @map("box_id")
   name         String?
-  pricePerHour Int
-  startTime    String
-  endTime      String
-  daysOfWeek   String?
-  startDate    DateTime?
-  endDate      DateTime?
-  priority     Int       @default(0)
-  active       Boolean   @default(true)
-  createdAt    DateTime  @default(now())
-  box          box       @relation(fields: [boxId], references: [id], map: "BoxPriceInterval_boxId_fkey")
+  pricePerHour Int      @map("price_per_hour")
+  startTime    String   @map("start_time")
+  endTime      String   @map("end_time")
+  dayType      String   @map("day_type")
+  minPeople    Int?     @map("min_people")
+  maxPeople    Int?     @map("max_people")
+  priority     Int      @default(0)
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now()) @map("created_at")
+  box          Box      @relation(fields: [boxId], references: [id], map: "BoxPriceInterval_boxId_fkey")
 
   @@index([boxId], map: "BoxPriceInterval_boxId_fkey")
 }
 
-model discount {
-  id           Int            @id @default(autoincrement())
-  code         String?
-  name         String?
-  type         String
-  value        Float
-  maxAmount    Int?
-  startsAt     DateTime?
-  endsAt       DateTime?
-  active       Boolean        @default(true)
-  appliesTo    String?
-  createdBy    Int?
-  createdAt    DateTime       @default(now())
-  billdiscount billdiscount[]
-  user         user?          @relation(fields: [createdBy], references: [id], map: "Discount_createdBy_fkey")
-
-  @@index([createdBy], map: "Discount_createdBy_fkey")
+model Dish {
+  id        Int        @id @default(autoincrement())
+  name      String // tên món
+  price     Int // giá món
+  type      DishType // loại món
+  createdAt DateTime   @default(now()) @map("created_at")
+  billDish  BillDish[]
 }
 
-model dish {
-  id        Int        @id @default(autoincrement())
-  name      String
-  price     Int
-  createdAt DateTime   @default(now())
-  billdish  billdish[]
-}
-
-model user {
-  id        Int        @id @default(autoincrement())
+model User {
+  id        Int       @id @default(autoincrement())
   username  String
-  role      user_role?
-  createdAt DateTime   @default(now())
+  role      UserRole?
+  createdAt DateTime  @default(now()) @map("created_at")
   password  String
-  bill      bill[]
-  discount  discount[]
+  bill      Bill[]
 }
 
-enum user_role {
+enum UserRole {
   ADMIN
   USER
+}
+
+enum DiscountType {
+  BILL // giảm theo tổng bill
+  DISH // giảm theo món
+  TIME // giảm theo giờ hát
+}
+
+enum BillStatus {
+  DRAFT // Khởi tạo
+  PAID // Đã thanh toán
+  CANCELED // Huỷ bỏ
+}
+
+enum BoxSize {
+  SMALL
+  MEDIUM
+  LARGE
+}
+
+enum BoxStatus {
+  AVAILABLE // Khả dụng
+  OCCUPIED // Đang sử dụng
+  MAINTENANCE // Đang bảo trì
+}
+
+enum DishType {
+  FOOD // đồ ăn đặt
+  DRINK // nước uống
+  SNACK // đồ ăn vặt
 }
