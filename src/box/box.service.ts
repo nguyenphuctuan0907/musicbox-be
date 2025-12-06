@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { Injectable } from '@nestjs/common';
 import { AppError } from 'libs/error/base.error';
 import { AppLogger } from 'libs/log/logger';
 import { PrismaService } from 'prisma/prisma.service';
 import { BillsService } from 'src/bills/bills.service';
+import { CreateBoxDto } from './dto/create-box.dto';
 
 export type RoomStatusRecord = {
   roomId: string;
@@ -24,6 +27,24 @@ export class BoxService {
     private readonly prisma: PrismaService,
     private readonly billService: BillsService,
   ) {}
+
+  async createBox(data: CreateBoxDto) {
+    try {
+      this.logger.debug('Creating new box!');
+
+      if (!data) {
+        throw new AppError('No data provided for creating box', 400);
+      }
+
+      return await this.prisma.box.create({ data });
+    } catch (error) {
+      this.logger.error(error.message || 'Error creating box');
+      throw new AppError(
+        error.message || 'Error creating box',
+        error.status || 500,
+      );
+    }
+  }
 
   async upsertStatus(payload: {
     boxId: number;
@@ -67,9 +88,7 @@ export class BoxService {
         end: null,
         subtotal: total, // có thể khác tùy cách tính subtotal
         total: total,
-        // minutes không có field riêng => bạn không thể lưu trực tiếp.
-        // Nếu muốn lưu minutes -> phải thêm trường vào DB (gợi ý dưới)
-        // updatedAt: new Date() // Prisma auto handle nếu bạn có @updatedAt
+        timeUsed: minutes,
       },
     });
 
@@ -82,7 +101,7 @@ export class BoxService {
     return this.prisma.box.findUnique({ where: { id } });
   }
 
-  getAll() {
+  getAllBills() {
     return this.prisma.box.findMany();
   }
 }

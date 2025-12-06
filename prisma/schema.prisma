@@ -48,7 +48,7 @@ model Box {
   name                String // tên phòng/box
   defaultPricePerHour Int                @map("default_price_per_hour") // tiền mặc định
   size                BoxSize
-  status              Boolean            @default(true)
+  status              BoxStatus          @default(AVAILABLE)
   createdAt           DateTime           @default(now()) @map("created_at")
   bill                Bill[]
   boxPriceInterval    BoxPriceInterval[]
@@ -57,15 +57,14 @@ model Box {
 model BoxPriceInterval {
   id           Int      @id @default(autoincrement())
   boxId        Int      @map("box_id")
-  name         String?
-  pricePerHour Int      @map("price_per_hour")
-  startTime    String   @map("start_time")
-  endTime      String   @map("end_time")
-  dayType      DishType @map("day_type")
-  minPeople    Int?     @map("min_people")
-  maxPeople    Int?     @map("max_people")
-  priority     Int      @default(0)
-  active       Boolean  @default(true)
+  name         String? // tên khung giờ
+  pricePerHour Int      @map("price_per_hour") // giá theo giờ
+  startTime    String   @map("start_time") // thời gian bắt đầu (định dạng HH:MM)
+  endTime      String   @map("end_time") // thời gian kết thúc (định dạng HH:MM)
+  dayType      DayType  @map("day_type") // loại ngày áp dụng
+  minPeople    Int?     @map("min_people") // số người tối thiểu
+  maxPeople    Int?     @map("max_people") // số người tối đa
+  priority     Int      @default(0) // độ ưu tiên khi áp dụng(từ nhỏ đến lớn)
   createdAt    DateTime @default(now()) @map("created_at")
   box          Box      @relation(fields: [boxId], references: [id], map: "BoxPriceInterval_boxId_fkey")
 
