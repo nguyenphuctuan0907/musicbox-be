@@ -3,11 +3,12 @@ import { BoxController } from './box.controller';
 import { BoxService } from './box.service';
 import { PrismaModule } from 'prisma/prisma.module';
 import { BoxGateway } from './box.gateway';
+import { BillsModule } from 'src/bills/bills.module';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, BillsModule],
   controllers: [BoxController],
   providers: [BoxService, BoxGateway],
-  exports: [BoxService],
+  exports: [BoxService, BoxGateway],
 })
 export class BoxModule {}

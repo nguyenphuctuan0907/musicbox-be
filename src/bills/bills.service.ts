@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { Bill } from 'generated/prisma/browser';
+import { Prisma } from 'generated/prisma/client';
 import { AppError } from 'libs/error/base.error';
 import { AppLogger } from 'libs/log/logger';
 import { PrismaService } from 'prisma/prisma.service';
@@ -8,41 +10,75 @@ export class BillsService {
   private readonly logger = new AppLogger(BillsService.name);
   constructor(private readonly prisma: PrismaService) {}
 
+  /**
+   * @param data - data to create a new bill
+   * @returns the created bill
+   */
   async createBill(data: {
     boxId: number;
     creatorId: number;
     subtotal: number;
     discountAmount: number;
     total: number;
-  }) {
-    const bill = await this.prisma.bill.create({
-      data: {
-        start: Date.now(),
-        boxId: data.boxId,
-        creatorId: data.creatorId,
-        subtotal: data.subtotal,
-        discountAmount: data.discountAmount,
-        total: data.total,
-        status: 'draft',
-      },
-    });
+  }): Promise<Bill> {
+    try {
+      const bill = await this.prisma.bill.create({
+        data: {
+          start: new Date(),
+          boxId: data.boxId,
+          creatorId: data.creatorId,
+          subtotal: data.subtotal,
+          discountAmount: data.discountAmount,
+          total: data.total,
+        },
+      });
 
-    return bill;
+      return bill;
+    } catch (error) {
+      this.logger.error(error || 'Lỗi tạo bill');
+      throw new AppError('Tạo bill thất bại', 500);
+    }
   }
 
-  async getBill(boxId: number) {
-    const bill = await this.prisma.bill.findFirst({
+  async getAllBills(): Promise<Bill[]> {
+    return this.prisma.bill.findMany();
+  }
+
+  /**
+   * @param id - id bill cần lấy
+   * @returns bill nếu tìm thấy
+   */
+  async getBill(id: number): Promise<Bill> {
+    const bill = await this.prisma.bill.findUnique({
       where: {
-        status: 'draft',
-        boxId: boxId,
+        id,
       },
     });
 
     if (!bill) {
-      this.logger.debug(`No open bill found for box ${boxId}`);
-      throw new AppError('No open bill found for the specified box.', 404);
+      this.logger.error(`Không tìm thấy bill với id: ${id}`);
+      throw new AppError('Không tìm thấy bill', 404);
     }
 
     return bill;
+  }
+
+  /**
+   * @param id - id bill cần cập nhật
+   * @param data - data (có thể là một phần của BillUpdateInput hoặc tat cả)
+   * @returns bill đã được cập nhật
+   */
+  async updateBill(id: number, data: Prisma.BillUpdateInput): Promise<Bill> {
+    try {
+      await this.getBill(id);
+
+      return this.prisma.bill.update({
+        where: { id },
+        data,
+      });
+    } catch (error) {
+      this.logger.error(error || 'Lỗi cập nhật bill');
+      throw new AppError('Cập nhật bill thất bại', 500);
+    }
   }
 }
