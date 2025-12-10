@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { BoxModule } from './box/box.module';
 import { JwtModule } from '@nestjs/jwt';
 import { BillsModule } from './bills/bills.module';
+import { ChatGateway } from './chat.gateway';
 
 @Module({
   imports: [
@@ -27,6 +28,6 @@ import { BillsModule } from './bills/bills.module';
     BillsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [ChatGateway, AppService],
 })
 export class AppModule {}
