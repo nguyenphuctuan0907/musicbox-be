@@ -9,6 +9,7 @@ import { BoxModule } from './box/box.module';
 import { JwtModule } from '@nestjs/jwt';
 import { BillsModule } from './bills/bills.module';
 import { ChatGateway } from './chat.gateway';
+import { PayosModule } from './payos/payos.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ChatGateway } from './chat.gateway';
     UsersModule,
     BoxModule,
     BillsModule,
+    PayosModule,
   ],
   controllers: [AppController],
   providers: [ChatGateway, AppService],

@@ -22,4 +22,12 @@ export class ChatGateway implements OnGatewayInit {
       console.log('Emit message:', message);
     }, 60 * 1000);
   }
+
+  // --- NEW: Emit trạng thái thanh toán cho FE ---
+  emitPaymentStatus(boxId: number, data: any) {
+    const room = `box_${boxId}`;
+    this.server.to(room).emit('payment_status', data);
+
+    console.log(`Emit payment update to ${room}:`, data);
+  }
 }

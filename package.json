@@ -20,7 +20,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "engines": {
-    "node": ">=18.0.0" 
+    "node": ">=18.0.0"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.9",
@@ -30,6 +30,7 @@
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/platform-socket.io": "^11.1.9",
     "@nestjs/websockets": "^11.1.9",
+    "@payos/node": "^2.0.3",
     "@prisma/adapter-mariadb": "^7.0.1",
     "@prisma/client": "^7.0.1",
     "@prisma/driver-adapter-utils": "^7.0.1",
