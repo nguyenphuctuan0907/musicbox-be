@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `Bill` MODIFY `total` INTEGER NOT NULL DEFAULT 0;

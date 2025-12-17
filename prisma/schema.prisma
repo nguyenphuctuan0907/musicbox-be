@@ -15,10 +15,10 @@ model Bill {
   boxId           Int        @map("box_id")
   creatorId       Int        @map("creator_id")
   timeUsed        Int        @default(0) @map("time_used") // thời gian sử dụng tính bằng phút
-  subtotal        Int // tiền trước khi giảm giá
+  subtotal        Int        @default(0) // tiền trước khi giảm giá
   discountAmount  Int        @default(0) @map("discount_amount") // tiền giảm giá
   discountPercent Float?     @map("discount_percent") // phần trăm giảm giá
-  total           Int // tiền khách phải trả
+  total           Int        @default(0)// tiền khách phải trả
   status          BillStatus @default(DRAFT) // trạng thái bill
   createdAt       DateTime   @default(now()) @map("created_at")
   box             Box        @relation(fields: [boxId], references: [id], map: "Bill_boxId_fkey")
@@ -122,6 +122,7 @@ enum DishType {
   FOOD // đồ ăn đặt
   DRINK // nước uống
   SNACK // đồ ăn vặt
+  MUSIC // dịch vụ âm nhạc
 }
 
 enum DayType {

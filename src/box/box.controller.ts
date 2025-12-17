@@ -13,6 +13,6 @@ export class BoxController {
 
   @Get()
   getAllBoxes() {
-    return this.boxService.getAllBills();
+    return this.boxService.getAllBoxes();
   }
 }

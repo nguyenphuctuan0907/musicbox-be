@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `Dish` MODIFY `type` ENUM('FOOD', 'DRINK', 'SNACK', 'MUSIC') NOT NULL;

@@ -101,7 +101,7 @@ export class BoxService {
     return this.prisma.box.findUnique({ where: { id } });
   }
 
-  getAllBills() {
+  getAllBoxes() {
     return this.prisma.box.findMany();
   }
 }

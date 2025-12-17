@@ -20,13 +20,7 @@ export class PayosService {
     returnUrl: string;
     cancelUrl: string;
   }) {
-    return await this.payos.paymentRequests.create({
-      amount: order.amount,
-      description: order.description,
-      orderCode: order.orderCode,
-      returnUrl: order.returnUrl,
-      cancelUrl: order.cancelUrl,
-    });
+    return await this.payos.paymentRequests.create(order);
   }
 
   verifyWebhook(body: any) {

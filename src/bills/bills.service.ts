@@ -4,6 +4,7 @@ import { Prisma } from 'generated/prisma/client';
 import { AppError } from 'libs/error/base.error';
 import { AppLogger } from 'libs/log/logger';
 import { PrismaService } from 'prisma/prisma.service';
+import { CreateBillDTO } from './dto/create-bill.dto';
 
 @Injectable()
 export class BillsService {
@@ -14,22 +15,14 @@ export class BillsService {
    * @param data - data to create a new bill
    * @returns the created bill
    */
-  async createBill(data: {
-    boxId: number;
-    creatorId: number;
-    subtotal: number;
-    discountAmount: number;
-    total: number;
-  }): Promise<Bill> {
+  async createBill(data: CreateBillDTO): Promise<Bill> {
     try {
       const bill = await this.prisma.bill.create({
         data: {
           start: new Date(),
           boxId: data.boxId,
           creatorId: data.creatorId,
-          subtotal: data.subtotal,
-          discountAmount: data.discountAmount,
-          total: data.total,
+          total: 0,
         },
       });
 

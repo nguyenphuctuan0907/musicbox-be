@@ -10,6 +10,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { BillsModule } from './bills/bills.module';
 import { ChatGateway } from './chat.gateway';
 import { PayosModule } from './payos/payos.module';
+import { DishModule } from './dish/dish.module';
 
 @Module({
   imports: [
@@ -27,7 +28,8 @@ import { PayosModule } from './payos/payos.module';
     UsersModule,
     BoxModule,
     BillsModule,
-    PayosModule,
+    DishModule,
+    // PayosModule,
   ],
   controllers: [AppController],
   providers: [ChatGateway, AppService],
