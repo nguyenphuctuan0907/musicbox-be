@@ -6,6 +6,7 @@ import { AppLogger } from 'libs/log/logger';
 import { PrismaService } from 'prisma/prisma.service';
 import { BillsService } from 'src/bills/bills.service';
 import { CreateBoxDto } from './dto/create-box.dto';
+import { DATA_DEFAULT } from './seed';
 
 export type RoomStatusRecord = {
   roomId: string;
@@ -103,5 +104,9 @@ export class BoxService {
 
   getAllBills() {
     return this.prisma.box.findMany();
+  }
+
+  seed() {
+    return this.prisma.box.createMany({data: DATA_DEFAULT as any, skipDuplicates: true})
   }
 }

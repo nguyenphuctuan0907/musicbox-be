@@ -6,7 +6,7 @@ import { ChatGateway } from 'src/chat.gateway';
 export class PayosController {
   constructor(
     private readonly payosService: PayosService,
-    private readonly gateway: ChatGateway,
+    // private readonly gateway: ChatGateway,
   ) {}
 
   // Tạo payment link
@@ -46,7 +46,7 @@ export class PayosController {
 
       // Bạn xử lý logic ở đây: cập nhật database, đơn hàng, gửi notify,...
       console.log('Webhook verified:', isValid);
-      return { message: 'OK' };
+      return { status: 'success' };
     } catch (err) {
       console.log('err', err);
     }

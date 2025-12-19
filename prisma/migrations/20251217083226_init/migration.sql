@@ -37,7 +37,7 @@ CREATE TABLE `Box` (
     `name` VARCHAR(191) NOT NULL,
     `default_price_per_hour` INTEGER NOT NULL,
     `size` ENUM('SMALL', 'MEDIUM', 'LARGE') NOT NULL,
-    `status` BOOLEAN NOT NULL DEFAULT true,
+    `status` ENUM('AVAILABLE', 'OCCUPIED', 'MAINTENANCE') NOT NULL DEFAULT 'AVAILABLE',
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     PRIMARY KEY (`id`)
@@ -51,11 +51,10 @@ CREATE TABLE `BoxPriceInterval` (
     `price_per_hour` INTEGER NOT NULL,
     `start_time` VARCHAR(191) NOT NULL,
     `end_time` VARCHAR(191) NOT NULL,
-    `day_type` VARCHAR(191) NOT NULL,
+    `day_type` ENUM('NORMAL', 'WEEKEND', 'HOLIDAY') NOT NULL,
     `min_people` INTEGER NULL,
     `max_people` INTEGER NULL,
     `priority` INTEGER NOT NULL DEFAULT 0,
-    `active` BOOLEAN NOT NULL DEFAULT true,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     INDEX `BoxPriceInterval_boxId_fkey`(`box_id`),
@@ -74,7 +73,7 @@ CREATE TABLE `Dish` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `user` (
+CREATE TABLE `User` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `username` VARCHAR(191) NOT NULL,
     `role` ENUM('ADMIN', 'USER') NULL,
@@ -88,7 +87,7 @@ CREATE TABLE `user` (
 ALTER TABLE `Bill` ADD CONSTRAINT `Bill_boxId_fkey` FOREIGN KEY (`box_id`) REFERENCES `Box`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Bill` ADD CONSTRAINT `Bill_creatorId_fkey` FOREIGN KEY (`creator_id`) REFERENCES `user`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Bill` ADD CONSTRAINT `Bill_creatorId_fkey` FOREIGN KEY (`creator_id`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `BillDish` ADD CONSTRAINT `BillDish_billId_fkey` FOREIGN KEY (`bill_id`) REFERENCES `Bill`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
