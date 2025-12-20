@@ -51,12 +51,10 @@ model Box {
   status              BoxStatus          @default(AVAILABLE)
   createdAt           DateTime           @default(now()) @map("created_at")
   bill                Bill[]
-  boxPriceInterval    BoxPriceInterval[]
 }
 
 model BoxPriceInterval {
   id           Int      @id @default(autoincrement())
-  boxId        Int      @map("box_id")
   name         String? // tên khung giờ
   pricePerHour Int      @map("price_per_hour") // giá theo giờ
   startTime    String   @map("start_time") // thời gian bắt đầu (định dạng HH:MM)
@@ -66,9 +64,7 @@ model BoxPriceInterval {
   maxPeople    Int?     @map("max_people") // số người tối đa
   priority     Int      @default(0) // độ ưu tiên khi áp dụng(từ nhỏ đến lớn)
   createdAt    DateTime @default(now()) @map("created_at")
-  box          Box      @relation(fields: [boxId], references: [id], map: "BoxPriceInterval_boxId_fkey")
 
-  @@index([boxId], map: "BoxPriceInterval_boxId_fkey")
 }
 
 model Dish {
