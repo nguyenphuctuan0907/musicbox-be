@@ -10,37 +10,48 @@ datasource db {
 
 model Bill {
   id              Int        @id @default(autoincrement())
-  start           DateTime // thời gian bắt đầu tạo bill
+  start           DateTime? // thời gian bắt đầu tạo bill
   end             DateTime? // thời gian kết thúc bill
   boxId           Int        @map("box_id")
-  creatorId       Int        @map("creator_id")
+  creatorId       Int?       @map("creator_id")
+  boxPriceId      Int?       @map("boxPriceInterval_id")
+  paymentMethod   PaymentMethod? // null = chưa thanh toán
+  qrCodeUrl       String?   // link QR
   timeUsed        Int        @default(0) @map("time_used") // thời gian sử dụng tính bằng phút
   subtotal        Int // tiền trước khi giảm giá
   discountAmount  Int        @default(0) @map("discount_amount") // tiền giảm giá
   discountPercent Float?     @map("discount_percent") // phần trăm giảm giá
-  total           Int // tiền khách phải trả
+  total           Int        @default(0) // tiền khách phải trả
   status          BillStatus @default(DRAFT) // trạng thái bill
   createdAt       DateTime   @default(now()) @map("created_at")
   box             Box        @relation(fields: [boxId], references: [id], map: "Bill_boxId_fkey")
-  user            User       @relation(fields: [creatorId], references: [id], map: "Bill_creatorId_fkey")
-  discountType    Int?
+  user            User?      @relation(fields: [creatorId], references: [id], map: "Bill_creatorId_fkey")
+  priceRule       BoxPriceInterval?      @relation(fields: [boxPriceId], references: [id], map: "Bill_boxPriceId_fkey")
+  discountType    TypeDiscount?
 
   billdish BillDish[]
 
   @@index([boxId], map: "Bill_boxId_fkey")
   @@index([creatorId], map: "Bill_creatorId_fkey")
+  @@index([boxPriceId], map: "Bill_boxPriceId_fkey")
 }
 
 model BillDish {
-  id       Int  @id @default(autoincrement())
-  billId   Int  @map("bill_id")
-  dishId   Int  @map("dish_id")
-  quantity Int // số lượng của món
-  bill     Bill @relation(fields: [billId], references: [id], map: "BillDish_billId_fkey")
-  dish     Dish @relation(fields: [dishId], references: [id], map: "BillDish_dishId_fkey")
+  id       Int @id @default(autoincrement())
 
-  @@index([billId], map: "BillDish_billId_fkey")
-  @@index([dishId], map: "BillDish_dishId_fkey")
+  billId   Int @map("bill_id")
+  dishId   Int @map("dish_id")
+
+  quantity Int @default(1)
+  price    Int
+
+  bill Bill @relation(fields: [billId], references: [id], onDelete: Cascade, map: "BillDish_billId_fkey")
+  dish Dish @relation(fields: [dishId], references: [id], map: "BillDish_dishId_fkey")
+
+  @@unique([billId, dishId])
+  @@index([billId])
+  @@index([dishId])
+  @@map("bill_dish")
 }
 
 model Box {
@@ -64,7 +75,7 @@ model BoxPriceInterval {
   maxPeople    Int?     @map("max_people") // số người tối đa
   priority     Int      @default(0) // độ ưu tiên khi áp dụng(từ nhỏ đến lớn)
   createdAt    DateTime @default(now()) @map("created_at")
-
+  bills        Bill[]
 }
 
 model Dish {
@@ -98,7 +109,9 @@ enum DiscountType {
 
 enum BillStatus {
   DRAFT // Khởi tạo
+  RUNNING // Đang tính h
   PAID // Đã thanh toán
+  PAYING // Đang thanh toán
   CANCELED // Huỷ bỏ
 }
 
@@ -124,4 +137,14 @@ enum DayType {
   NORMAL // ngày thường
   WEEKEND // cuối tuần
   HOLIDAY // ngàu lễ
+}
+
+enum PaymentMethod {
+  CASH        // Tiền mặt
+  TRANSFER    // Chuyển khoản
+}
+
+enum TypeDiscount {
+  VND        // Tiền 
+  PERCENT    // %
 }

@@ -172,7 +172,7 @@ export const DATA_DEFAULT = [
     endTime: '13:59',
     minPeople: 4,
     maxPeople: 6,
-    pricePerHour: 35000,
+    pricePerHour: 55000,
     dayType: 'WEEKEND',
   },
   {

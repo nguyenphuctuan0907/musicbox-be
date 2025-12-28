@@ -25,9 +25,9 @@ export class ChatGateway implements OnGatewayInit {
 
   // --- NEW: Emit trạng thái thanh toán cho FE ---
   emitPaymentStatus(boxId: number, data: any) {
-    const room = `box_${boxId}`;
-    this.server.to(room).emit('payment_status', data);
+    console.log('emitPaymentStatus', boxId, data);
+    this.server.emit('payment_status', data);
 
-    console.log(`Emit payment update to ${room}:`, data);
+    console.log(`Emit payment update to ${boxId}:`, data);
   }
 }
