@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put } from '@nestjs/common';
 import { BoxService } from './box.service';
 import { CreateBoxDto } from './dto/create-box.dto';
 
@@ -14,5 +14,15 @@ export class BoxController {
   @Get()
   getAllBoxes() {
     return this.boxService.getAllBills();
+  }
+
+  @Post('upsert-status')
+  upsertStatus(@Body() body) {
+    return this.boxService.upsertStatus(body);
+  }
+
+  @Put('change-box')
+  handleChangeBox(@Body() body) {
+    return this.boxService.changeBox(body);
   }
 }

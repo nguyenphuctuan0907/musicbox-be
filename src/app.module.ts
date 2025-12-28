@@ -10,6 +10,10 @@ import { JwtModule } from '@nestjs/jwt';
 import { BillsModule } from './bills/bills.module';
 import { ChatGateway } from './chat.gateway';
 import { PayosModule } from './payos/payos.module';
+import { PriceModule } from './price/price.module';
+import { BillDishModule } from './billDish/billDish.module';
+import { DishModule } from './dish/dish.module';
+import { ZaloBotModule } from './zalo/zalo.module';
 
 @Module({
   imports: [
@@ -27,7 +31,11 @@ import { PayosModule } from './payos/payos.module';
     UsersModule,
     BoxModule,
     BillsModule,
+    PriceModule,
     PayosModule,
+    BillDishModule,
+    DishModule,
+    ZaloBotModule,
   ],
   controllers: [AppController],
   providers: [ChatGateway, AppService],

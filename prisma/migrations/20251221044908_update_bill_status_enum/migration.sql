@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `bill` MODIFY `status` ENUM('DRAFT', 'RUNNING', 'PAID', 'CANCELED') NOT NULL DEFAULT 'DRAFT';

@@ -4,9 +4,10 @@ import { BoxService } from './box.service';
 import { PrismaModule } from 'prisma/prisma.module';
 import { BoxGateway } from './box.gateway';
 import { BillsModule } from 'src/bills/bills.module';
+import { BillDishModule } from 'src/billDish/billDish.module';
 
 @Module({
-  imports: [PrismaModule, BillsModule],
+  imports: [PrismaModule, BillsModule, BillDishModule],
   controllers: [BoxController],
   providers: [BoxService, BoxGateway],
   exports: [BoxService, BoxGateway],
