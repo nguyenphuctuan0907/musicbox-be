@@ -1,3 +1,5 @@
-2025/12/29-16:22:25.792 512c Reusing MANIFEST D:\TUNA\68_MUSIC_BOX\BE_KIOTVIET\musicbox-be\zalo-session\Default\Local Storage\leveldb/MANIFEST-000001
-2025/12/29-16:22:25.797 512c Recovering log #459
-2025/12/29-16:22:25.798 512c Reusing old log D:\TUNA\68_MUSIC_BOX\BE_KIOTVIET\musicbox-be\zalo-session\Default\Local Storage\leveldb/000459.log 
+2025/12/29-17:53:11.362 5370 Reusing MANIFEST D:\TUNA\68_MUSIC_BOX\BE_KIOTVIET\musicbox-be\zalo-session\Default\Local Storage\leveldb/MANIFEST-000001
+2025/12/29-17:53:11.368 5370 Recovering log #488
+2025/12/29-17:53:11.368 5370 Level-0 table #492: started
+2025/12/29-17:53:11.388 5370 Level-0 table #492: 23357 bytes OK
+2025/12/29-17:53:11.414 5370 Delete type=0 #488

@@ -16,19 +16,11 @@ async function bootstrap() {
   };
 
   const app = await NestFactory.create(AppModule, nestAppOpt);
+
   app.use(
     bodyParser.json({
       verify: (req: any, res, buf) => {
-        req.rawBody = buf.toString();
-      },
-    }),
-  );
-
-  app.use(
-    bodyParser.urlencoded({
-      extended: true,
-      verify: (req: any, res, buf) => {
-        req.rawBody = buf.toString();
+        req.rawBody = buf;
       },
     }),
   );

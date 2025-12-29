@@ -33,7 +33,7 @@ export class PayosService {
     });
   }
 
-  verifyWebhook(body: any) {
+  verifyWebhook(body: string) {
     return this.payos.webhooks.verify(body);
   }
 

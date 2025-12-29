@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Req, Res } from '@nestjs/common';
+import { Controller, Post, Body, Req, Res, Headers } from '@nestjs/common';
 import { PayosService } from './payos.service';
 import { ChatGateway } from 'src/chat.gateway';
 import { ZaloService } from 'src/zalo/zalo.service';
@@ -34,37 +34,50 @@ export class PayosController {
 
   // Webhook PayOS gửi về
   @Post('webhook')
-  async handleWebhook(@Req() req: any, @Body() body: any) {
-    console.log('Body', body);
+  async handleWebhook(@Req() req: any) {
     try {
-      const isValid = await this.payosService.verifyWebhook(body);
-      if (!isValid) {
-        return { message: 'Invalid webhook' };
+      if (!req.rawBody) {
+        throw new Error('Missing rawBody');
       }
+
+      // if (!signature) {
+      //   throw new Error('Missing x-payos-signature');
+      // }
+
+      const rawBody = req.rawBody.toString('utf8');
+
+      const body = JSON.parse(rawBody.toString());
+      // VERIFY TRƯỚC
+      this.payosService.verifyWebhook(body);
+
       const orderCode = body.data.orderCode;
       const boxId = Math.floor(orderCode / 1_000_000);
 
-      // Bạn xử lý logic ở đây: cập nhật database, đơn hàng, gửi notify,...
       if (body.success) {
         const res = await this.billsService.paymentCash({
           boxId,
           total: body.data.amount,
           paymentMethod: 'TRANSFER',
         });
-        const mess = `✅ ${res.name} | 💰 ${body.data.amount.toLocaleString('vi-VN')} VNĐ | 💳 CK | ⏰ ${body.data.transactionDateTime} | 📌 ĐÃ TT ${orderCode}`;
+
+        const mess =
+          `✅ ${res.name} | 💰 ${body.data.amount.toLocaleString('vi-VN')} VNĐ | ` +
+          `💳 CK | ⏰ ${body.data.transactionDateTime} | 📌 ĐÃ TT ${orderCode}`;
+
         await this.zaloService.sendToGroup('68 Box Đêm', mess);
 
-        // Emit về FE
         this.gateway.emitPaymentStatus(boxId, {
           orderCode,
-          status: body.success,
+          status: true,
           amount: body.data.amount,
           boxId,
         });
       }
+
       return { status: 'success' };
     } catch (err) {
-      console.log('err', err);
+      console.error('Webhook error:', err);
+      return { status: 'invalid' };
     }
   }
 }
