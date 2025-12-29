@@ -150,6 +150,13 @@ export class ZaloService implements OnModuleDestroy {
   private async openGroupByName(groupName: string) {
     const page = this.page!;
     // 2️⃣ Lấy input search hợp lệ
+
+    // 1️⃣ Chờ UI Zalo load xong (KHÔNG dùng ID cố định)
+    await page.waitForFunction(
+      () => document.querySelectorAll('input').length > 0,
+      { timeout: 60000 },
+    );
+
     const inputHandle = await page.evaluateHandle(() => {
       const inputs = Array.from(document.querySelectorAll('input'));
       return inputs.find(
