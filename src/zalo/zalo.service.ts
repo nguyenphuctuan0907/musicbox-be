@@ -15,7 +15,10 @@ export class ZaloService implements OnModuleDestroy {
   private started = false;
   private loggedIn = false;
 
-  private readonly sessionDir = path.join(process.cwd(), 'zalo-session');
+  private readonly sessionDir = path.join(
+    process.cwd(),
+    'zalo-puppeteer-session',
+  );
 
   private activeGroup: string | null = null;
 
@@ -106,9 +109,6 @@ export class ZaloService implements OnModuleDestroy {
 
   private async ensureLogin() {
     try {
-      await this.page?.screenshot({ path: 'zalo-vps.png', fullPage: true });
-      console.log(await this.page?.url());
-
       await this.page?.waitForSelector('#contact-search-input', {
         visible: true,
         timeout: 20000,

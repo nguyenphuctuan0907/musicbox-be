@@ -16,20 +16,26 @@ export class PayosController {
   // Tạo payment link
   @Post('create-payment')
   async createPayment(@Body() body: any) {
-    const { amount, returnUrl, cancelUrl, boxId } = body;
-    // const orderCode = Date.now(); // auto-gen mã đơn hàng
-    const orderCode = boxId * 1_000_000 + Math.floor(Math.random() * 1000000);
-    const payosRes = await this.payosService.createPayment({
-      amount,
-      description: `#${orderCode}`,
-      orderCode,
-      returnUrl,
-      cancelUrl,
-    });
+    try {
+      console.log({ body });
+      const { amount, returnUrl, cancelUrl, boxId } = body;
+      // const orderCode = Date.now(); // auto-gen mã đơn hàng
+      const orderCode = boxId * 1_000_000 + Math.floor(Math.random() * 1000000);
+      const payosRes = await this.payosService.createPayment({
+        amount,
+        description: `#${orderCode}`,
+        orderCode,
+        returnUrl,
+        cancelUrl,
+      });
 
-    await this.payosService.updateQrCode(boxId, payosRes.qrCode);
+      await this.payosService.updateQrCode(boxId, payosRes.qrCode);
 
-    return payosRes;
+      return payosRes;
+    } catch (err) {
+      console.error('Create payment error:', err);
+      throw err;
+    }
   }
 
   // Webhook PayOS gửi về
