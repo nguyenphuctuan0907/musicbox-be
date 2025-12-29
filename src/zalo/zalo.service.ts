@@ -83,7 +83,7 @@ export class ZaloService implements OnModuleDestroy {
     if (this.browser) return;
 
     this.browser = await puppeteer.launch({
-      headless: true, // production
+      headless: false, // production
       userDataDir: this.sessionDir,
       args: [
         '--no-sandbox',
@@ -106,6 +106,9 @@ export class ZaloService implements OnModuleDestroy {
 
   private async ensureLogin() {
     try {
+      await this.page?.screenshot({ path: 'zalo-vps.png', fullPage: true });
+      console.log(await this.page?.url());
+
       await this.page?.waitForSelector('#contact-search-input', {
         visible: true,
         timeout: 20000,
