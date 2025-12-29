@@ -34,7 +34,7 @@ export class PayosController {
 
   // Webhook PayOS gửi về
   @Post('webhook')
-  async handleWebhook(@Body() body: any) {
+  async handleWebhook(@Req() req: any, @Body() body: any) {
     console.log('Body', body);
     try {
       const isValid = await this.payosService.verifyWebhook(body);
