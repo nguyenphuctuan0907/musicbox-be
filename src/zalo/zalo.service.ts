@@ -148,12 +148,23 @@ export class ZaloService implements OnModuleDestroy {
   }
 
   private async openGroupByName(groupName: string) {
-    await this.page!.waitForSelector('#contact-search-input', {
-      visible: true,
+    const page = this.page!;
+    // 2️⃣ Lấy input search hợp lệ
+    const inputHandle = await page.evaluateHandle(() => {
+      const inputs = Array.from(document.querySelectorAll('input'));
+      return inputs.find(
+        (i) =>
+          i.getAttribute('placeholder')?.toLowerCase().includes('tìm') ||
+          i.getAttribute('aria-label')?.toLowerCase().includes('tìm'),
+      );
     });
 
-    const input = await this.page!.$('#contact-search-input');
-    if (!input) throw new Error('Search input not found');
+    const input = inputHandle.asElement() as any;
+    if (!input) {
+      throw new Error(
+        'Zalo search input not found (DOM changed or headless blocked)',
+      );
+    }
 
     await input.click({ clickCount: 3 });
     await this.page!.keyboard.press('Backspace');
