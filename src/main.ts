@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import { NestFactory } from '@nestjs/core';
+import * as bodyParser from 'body-parser';
 import { AppModule } from './app.module';
 import { AppLogger } from 'libs/log/logger';
 import { NestApplicationOptions } from '@nestjs/common/interfaces';
@@ -15,6 +16,22 @@ async function bootstrap() {
   };
 
   const app = await NestFactory.create(AppModule, nestAppOpt);
+  app.use(
+    bodyParser.json({
+      verify: (req: any, res, buf) => {
+        req.rawBody = buf.toString();
+      },
+    }),
+  );
+
+  app.use(
+    bodyParser.urlencoded({
+      extended: true,
+      verify: (req: any, res, buf) => {
+        req.rawBody = buf.toString();
+      },
+    }),
+  );
 
   const zalo = app.get(ZaloService);
 
