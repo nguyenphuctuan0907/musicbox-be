@@ -40,10 +40,6 @@ export class PayosController {
         throw new Error('Missing rawBody');
       }
 
-      // if (!signature) {
-      //   throw new Error('Missing x-payos-signature');
-      // }
-
       const rawBody = req.rawBody.toString('utf8');
 
       const body = JSON.parse(rawBody.toString());
