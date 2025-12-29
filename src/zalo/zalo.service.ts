@@ -109,10 +109,12 @@ export class ZaloService implements OnModuleDestroy {
 
   private async ensureLogin() {
     try {
-      await this.page?.waitForSelector('#contact-search-input', {
-        visible: true,
-        timeout: 20000,
-      });
+      await this.page?.waitForFunction(
+        () => {
+          return document.querySelectorAll('input').length > 0;
+        },
+        { timeout: 30000 },
+      );
 
       this.loggedIn = true;
       this.logger.log('Zalo logged in (session valid)');
