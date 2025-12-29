@@ -83,7 +83,7 @@ export class ZaloService implements OnModuleDestroy {
     if (this.browser) return;
 
     this.browser = await puppeteer.launch({
-      headless: false, // production
+      headless: true, // production
       userDataDir: this.sessionDir,
       args: [
         '--no-sandbox',
