@@ -90,8 +90,8 @@ export class ZaloService implements OnModuleDestroy {
       userDataDir: this.sessionDir,
       args: [
         '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
+        // '--disable-setuid-sandbox',
+        // '--disable-dev-shm-usage',
       ],
     });
 
