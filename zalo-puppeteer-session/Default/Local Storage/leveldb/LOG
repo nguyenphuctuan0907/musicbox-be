@@ -1,8 +1,6 @@
-2025/12/30-00:33:56.268 1ae8 Reusing MANIFEST D:\TUNA\68_MUSIC_BOX\BE_KIOTVIET\musicbox-be\zalo-puppeteer-session\Default\Local Storage\leveldb/MANIFEST-000001
-2025/12/30-00:33:56.275 1ae8 Recovering log #3
-2025/12/30-00:33:56.276 1ae8 Level-0 table #3: started
-2025/12/30-00:33:56.349 1ae8 Level-0 table #3: 81636 bytes OK
-2025/12/30-00:33:56.386 1ae8 Delete type=0 #3
-2025/12/30-00:34:56.394 55b8 Level-0 table #6: started
-2025/12/30-00:34:56.437 55b8 Level-0 table #6: 96293 bytes OK
-2025/12/30-00:34:56.462 55b8 Delete type=0 #4
+2025/12/30-11:01:21.691 1a44 Reusing MANIFEST D:\TUNA\68_MUSIC_BOX\BE_KIOTVIET\musicbox-be\zalo-puppeteer-session\Default\Local Storage\leveldb/MANIFEST-000001
+2025/12/30-11:01:21.698 1a44 Recovering log #10
+2025/12/30-11:01:21.700 1a44 Reusing old log D:\TUNA\68_MUSIC_BOX\BE_KIOTVIET\musicbox-be\zalo-puppeteer-session\Default\Local Storage\leveldb/000010.log 
+2025/12/30-11:02:21.705 4644 Level-0 table #15: started
+2025/12/30-11:02:21.719 4644 Level-0 table #15: 42606 bytes OK
+2025/12/30-11:02:21.732 4644 Delete type=0 #10

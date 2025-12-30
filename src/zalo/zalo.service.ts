@@ -113,7 +113,7 @@ export class ZaloService implements OnModuleDestroy {
         () => {
           return document.querySelectorAll('input').length > 0;
         },
-        { timeout: 30000 },
+        { timeout: 3000 },
       );
 
       this.loggedIn = true;
@@ -150,7 +150,10 @@ export class ZaloService implements OnModuleDestroy {
   private async openGroupByName(groupName: string) {
     const page = this.page!;
 
-    this.logger.log('Waiting for Zalo UI...');
+    this.logger.log('Waiting for Zalo UI...', this.page?.url());
+    await this.page?.screenshot({
+      path: `zalo-ui-${Date.now()}.png`,
+    });
 
     // 1️⃣ Đợi chat box (ổn định nhất)
     await page.waitForFunction(

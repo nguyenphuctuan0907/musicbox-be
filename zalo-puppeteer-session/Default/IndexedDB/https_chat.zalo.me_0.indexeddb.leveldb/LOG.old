@@ -1,3 +1,6 @@
-2025/12/30-00:33:05.887 4fd0 Reusing MANIFEST D:\TUNA\68_MUSIC_BOX\BE_KIOTVIET\musicbox-be\zalo-puppeteer-session\Default\IndexedDB\https_chat.zalo.me_0.indexeddb.leveldb/MANIFEST-000001
-2025/12/30-00:33:05.888 4fd0 Recovering log #3
-2025/12/30-00:33:05.888 4fd0 Reusing old log D:\TUNA\68_MUSIC_BOX\BE_KIOTVIET\musicbox-be\zalo-puppeteer-session\Default\IndexedDB\https_chat.zalo.me_0.indexeddb.leveldb/000003.log 
+2025/12/30-10:57:06.880 4114 Reusing MANIFEST D:\TUNA\68_MUSIC_BOX\BE_KIOTVIET\musicbox-be\zalo-puppeteer-session\Default\IndexedDB\https_chat.zalo.me_0.indexeddb.leveldb/MANIFEST-000001
+2025/12/30-10:57:06.880 4114 Recovering log #3
+2025/12/30-10:57:06.916 4114 Reusing old log D:\TUNA\68_MUSIC_BOX\BE_KIOTVIET\musicbox-be\zalo-puppeteer-session\Default\IndexedDB\https_chat.zalo.me_0.indexeddb.leveldb/000003.log 
+2025/12/30-10:57:16.151 2664 Level-0 table #5: started
+2025/12/30-10:57:16.266 2664 Level-0 table #5: 1613254 bytes OK
+2025/12/30-10:57:16.302 2664 Delete type=0 #3
