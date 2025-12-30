@@ -149,48 +149,38 @@ export class ZaloService implements OnModuleDestroy {
 
   private async openGroupByName(groupName: string) {
     const page = this.page!;
-    // 2️⃣ Lấy input search hợp lệ
 
-    // 1️⃣ Chờ UI Zalo load xong (KHÔNG dùng ID cố định)
+    this.logger.log('Waiting for Zalo UI...');
+
+    // 1️⃣ Đợi chat box (ổn định nhất)
     await page.waitForFunction(
-      () => document.querySelectorAll('input').length > 0,
+      () =>
+        Array.from(document.querySelectorAll('div')).some(
+          (d) => d.getAttribute('contenteditable') === 'true',
+        ),
       { timeout: 60000 },
     );
 
-    const inputHandle = await page.evaluateHandle(() => {
-      const inputs = Array.from(document.querySelectorAll('input'));
-      return inputs.find(
-        (i) =>
-          i.getAttribute('placeholder')?.toLowerCase().includes('tìm') ||
-          i.getAttribute('aria-label')?.toLowerCase().includes('tìm'),
-      );
-    });
+    // 2️⃣ Bấm Ctrl+F để mở search (Zalo hỗ trợ)
+    await page.keyboard.down('Control');
+    await page.keyboard.press('KeyF');
+    await page.keyboard.up('Control');
 
-    const input = inputHandle.asElement() as any;
-    if (!input) {
-      throw new Error(
-        'Zalo search input not found (DOM changed or headless blocked)',
-      );
-    }
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
-    await input.click({ clickCount: 3 });
-    await this.page!.keyboard.press('Backspace');
-    await input.type(groupName, { delay: 80 });
+    // 3️⃣ Gõ tên group
+    await page.keyboard.type(groupName, { delay: 80 });
+    await new Promise((resolve) => setTimeout(resolve, 1500));
 
-    await new Promise((resolve) => setTimeout(resolve, 1200));
-
-    const items = await this.page!.$$('div[id^="group-item-"]');
-    if (!items.length) {
+    // 4️⃣ Click group đầu tiên
+    const groups = await page.$$('div[id^="group-item-"]');
+    if (!groups.length) {
       throw new Error(`Group not found: ${groupName}`);
     }
 
-    await items[0].click();
+    await groups[0].click();
 
-    await this.page!.waitForSelector('div[contenteditable="true"]', {
-      visible: true,
-    });
-
-    this.logger.log(`Group opened: ${groupName}`);
+    this.logger.log(`Opened group: ${groupName}`);
   }
 
   /* ================= MESSAGE ================= */
