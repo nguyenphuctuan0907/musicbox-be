@@ -15,7 +15,10 @@ export class ZaloService implements OnModuleDestroy {
   private started = false;
   private loggedIn = false;
 
-  private readonly sessionDir = path.join(process.cwd(), 'zalo-session');
+  private readonly sessionDir = path.join(
+    process.cwd(),
+    'zalo-puppeteer-session',
+  );
 
   private activeGroup: string | null = null;
 
