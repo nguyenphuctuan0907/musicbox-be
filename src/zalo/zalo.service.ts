@@ -15,10 +15,7 @@ export class ZaloService implements OnModuleDestroy {
   private started = false;
   private loggedIn = false;
 
-  private readonly sessionDir = path.join(
-    process.cwd(),
-    'zalo-puppeteer-session',
-  );
+  private readonly sessionDir = path.join(process.cwd(), 'zalo-session');
 
   private activeGroup: string | null = null;
 
@@ -109,12 +106,10 @@ export class ZaloService implements OnModuleDestroy {
 
   private async ensureLogin() {
     try {
-      await this.page?.waitForFunction(
-        () => {
-          return document.querySelectorAll('input').length > 0;
-        },
-        { timeout: 3000 },
-      );
+      await this.page?.waitForSelector('#contact-search-input', {
+        visible: true,
+        timeout: 20000,
+      });
 
       this.loggedIn = true;
       this.logger.log('Zalo logged in (session valid)');
@@ -148,42 +143,36 @@ export class ZaloService implements OnModuleDestroy {
   }
 
   private async openGroupByName(groupName: string) {
-    const page = this.page!;
-
     this.logger.log('Waiting for Zalo UI...', this.page?.url());
     await this.page?.screenshot({
       path: `zalo-ui-${Date.now()}.png`,
     });
 
-    // 1️⃣ Đợi chat box (ổn định nhất)
-    await page.waitForFunction(
-      () =>
-        Array.from(document.querySelectorAll('div')).some(
-          (d) => d.getAttribute('contenteditable') === 'true',
-        ),
-      { timeout: 60000 },
-    );
+    await this.page!.waitForSelector('#contact-search-input', {
+      visible: true,
+    });
 
-    // 2️⃣ Bấm Ctrl+F để mở search (Zalo hỗ trợ)
-    await page.keyboard.down('Control');
-    await page.keyboard.press('KeyF');
-    await page.keyboard.up('Control');
+    const input = await this.page!.$('#contact-search-input');
+    if (!input) throw new Error('Search input not found');
 
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await input.click({ clickCount: 3 });
+    await this.page!.keyboard.press('Backspace');
+    await input.type(groupName, { delay: 80 });
 
-    // 3️⃣ Gõ tên group
-    await page.keyboard.type(groupName, { delay: 80 });
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    await new Promise((resolve) => setTimeout(resolve, 1200));
 
-    // 4️⃣ Click group đầu tiên
-    const groups = await page.$$('div[id^="group-item-"]');
-    if (!groups.length) {
+    const items = await this.page!.$$('div[id^="group-item-"]');
+    if (!items.length) {
       throw new Error(`Group not found: ${groupName}`);
     }
 
-    await groups[0].click();
+    await items[0].click();
 
-    this.logger.log(`Opened group: ${groupName}`);
+    await this.page!.waitForSelector('div[contenteditable="true"]', {
+      visible: true,
+    });
+
+    this.logger.log(`Group opened: ${groupName}`);
   }
 
   /* ================= MESSAGE ================= */
