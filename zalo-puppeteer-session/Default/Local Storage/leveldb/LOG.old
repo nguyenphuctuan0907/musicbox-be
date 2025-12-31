@@ -1,17 +1,15 @@
-2025/12/30-10:57:05.262 2900 Reusing MANIFEST D:\TUNA\68_MUSIC_BOX\BE_KIOTVIET\musicbox-be\zalo-puppeteer-session\Default\Local Storage\leveldb/MANIFEST-000001
-2025/12/30-10:57:05.268 2900 Recovering log #5
-2025/12/30-10:57:05.269 2900 Reusing old log D:\TUNA\68_MUSIC_BOX\BE_KIOTVIET\musicbox-be\zalo-puppeteer-session\Default\Local Storage\leveldb/000005.log 
-2025/12/30-10:58:05.277 3dd0 Level-0 table #9: started
-2025/12/30-10:58:05.294 3dd0 Level-0 table #9: 81163 bytes OK
-2025/12/30-10:58:05.320 3dd0 Delete type=0 #5
-2025/12/30-10:59:05.444 3dd0 Level-0 table #11: started
-2025/12/30-10:59:05.473 3dd0 Level-0 table #11: 50539 bytes OK
-2025/12/30-10:59:05.498 3dd0 Delete type=0 #8
-2025/12/30-10:59:05.498 3dd0 Compacting 4@0 + 0@1 files
-2025/12/30-10:59:05.518 3dd0 Generated table #12@0: 155 keys, 71477 bytes
-2025/12/30-10:59:05.518 3dd0 Compacted 4@0 + 0@1 files => 71477 bytes
-2025/12/30-10:59:05.542 3dd0 compacted to: files[ 0 1 0 0 0 0 0 ]
-2025/12/30-10:59:05.543 3dd0 Delete type=2 #3
-2025/12/30-10:59:05.543 3dd0 Delete type=2 #6
-2025/12/30-10:59:05.543 3dd0 Delete type=2 #9
-2025/12/30-10:59:05.543 3dd0 Delete type=2 #11
+2025/12/31-16:29:32.979 6b44 Reusing MANIFEST D:\TUNA\68_MUSIC_BOX\BE_KIOTVIET\musicbox-be\zalo-puppeteer-session\Default\Local Storage\leveldb/MANIFEST-000001
+2025/12/31-16:29:32.987 6b44 Recovering log #19
+2025/12/31-16:29:32.989 6b44 Reusing old log D:\TUNA\68_MUSIC_BOX\BE_KIOTVIET\musicbox-be\zalo-puppeteer-session\Default\Local Storage\leveldb/000019.log 
+2025/12/31-16:30:32.998 65c4 Level-0 table #23: started
+2025/12/31-16:30:33.020 65c4 Level-0 table #23: 46282 bytes OK
+2025/12/31-16:30:33.032 65c4 Delete type=0 #19
+2025/12/31-16:30:33.032 65c4 Compacting 4@0 + 1@1 files
+2025/12/31-16:30:33.055 65c4 Generated table #24@0: 386 keys, 115481 bytes
+2025/12/31-16:30:33.056 65c4 Compacted 4@0 + 1@1 files => 115481 bytes
+2025/12/31-16:30:33.067 65c4 compacted to: files[ 0 1 0 0 0 0 0 ]
+2025/12/31-16:30:33.068 65c4 Delete type=2 #12
+2025/12/31-16:30:33.068 65c4 Delete type=2 #15
+2025/12/31-16:30:33.068 65c4 Delete type=2 #18
+2025/12/31-16:30:33.068 65c4 Delete type=2 #20
+2025/12/31-16:30:33.069 65c4 Delete type=2 #23

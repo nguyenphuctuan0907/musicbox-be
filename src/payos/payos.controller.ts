@@ -1,14 +1,12 @@
 import { Controller, Post, Body, Req, Res, Headers } from '@nestjs/common';
 import { PayosService } from './payos.service';
 import { ChatGateway } from 'src/chat.gateway';
-import { ZaloService } from 'src/zalo/zalo.service';
 import { BillsService } from 'src/bills/bills.service';
 
 @Controller('payos')
 export class PayosController {
   constructor(
     private readonly payosService: PayosService,
-    private readonly zaloService: ZaloService,
     private readonly billsService: BillsService,
     private readonly gateway: ChatGateway,
   ) {}
@@ -56,17 +54,11 @@ export class PayosController {
       const boxId = Math.floor(orderCode / 1_000_000);
 
       if (body.success) {
-        const res = await this.billsService.paymentCash({
+        await this.billsService.paymentCash({
           boxId,
           total: body.data.amount,
           paymentMethod: 'TRANSFER',
         });
-
-        const mess =
-          `✅ ${res.name} | 💰 ${body.data.amount.toLocaleString('vi-VN')} VNĐ | ` +
-          `💳 CK | ⏰ ${body.data.transactionDateTime} | 📌 ĐÃ TT ${orderCode}`;
-
-        await this.zaloService.sendToGroup('68 Box Đêm', mess);
 
         this.gateway.emitPaymentStatus(boxId, {
           orderCode,

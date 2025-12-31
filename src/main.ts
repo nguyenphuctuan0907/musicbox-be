@@ -6,7 +6,6 @@ import { AppLogger } from 'libs/log/logger';
 import { NestApplicationOptions } from '@nestjs/common/interfaces';
 import { AllExceptionsFilter } from 'libs/filter/exception.filter';
 import { IoAdapter } from '@nestjs/platform-socket.io';
-import { ZaloService } from './zalo/zalo.service';
 
 async function bootstrap() {
   const logger = new AppLogger();
@@ -25,14 +24,11 @@ async function bootstrap() {
     }),
   );
 
-  const zalo = app.get(ZaloService);
-
   app.enableCors();
   app.setGlobalPrefix('api');
   app.useGlobalFilters(new AllExceptionsFilter());
   app.useWebSocketAdapter(new IoAdapter(app));
 
-  await zalo.start();
   await app.listen(process.env.PORT ?? 3000).then(async () => {
     logger.log('Application is running on: ' + (await app.getUrl()));
   });

@@ -19,7 +19,6 @@ export class ChatGateway implements OnGatewayInit {
     setInterval(() => {
       const message = Date.now();
       this.server.emit('minute_tick', message);
-      console.log('Emit message:', message);
     }, 60 * 1000);
   }
 

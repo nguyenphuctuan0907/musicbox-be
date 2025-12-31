@@ -4,15 +4,11 @@ import { Prisma } from 'generated/prisma/client';
 import { AppError } from 'libs/error/base.error';
 import { AppLogger } from 'libs/log/logger';
 import { PrismaService } from 'prisma/prisma.service';
-import { ZaloService } from 'src/zalo/zalo.service';
 
 @Injectable()
 export class BillsService {
   private readonly logger = new AppLogger(BillsService.name);
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly zaloService: ZaloService,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   /**
    * @param data - data to create a new bill
@@ -189,11 +185,6 @@ export class BillsService {
           qrCodeUrl: paymentMethod === 'CASH' ? null : bill.qrCodeUrl,
         },
       });
-
-      if (paymentMethod === 'CASH') {
-        const mess = `✅ ${box.name} | 💰 ${total.toLocaleString('vi-VN')} VNĐ | 💳 TM | ⏰ ${new Date().toLocaleString('vi-VN')} | 📌 ĐÃ TT`;
-        await this.zaloService.sendToGroup('68 Box Đêm', mess);
-      }
 
       return { ...res, name: box.name };
     } catch (err) {
