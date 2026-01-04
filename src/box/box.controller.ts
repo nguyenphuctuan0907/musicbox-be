@@ -25,4 +25,9 @@ export class BoxController {
   handleChangeBox(@Body() body) {
     return this.boxService.changeBox(body);
   }
+
+  @Get('time-minutes')
+  getTimeMinutes() {
+    return this.boxService.getTimeMinutes();
+  }
 }

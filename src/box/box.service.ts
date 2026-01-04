@@ -229,6 +229,10 @@ export class BoxService {
     });
   }
 
+  getTimeMinutes() {
+    return Date.now();
+  }
+
   seed() {
     return this.prisma.box.createMany({
       data: DATA_DEFAULT as any,
