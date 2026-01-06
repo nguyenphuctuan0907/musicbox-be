@@ -56,12 +56,6 @@ export class PayosController {
       const orderCode = body.data.orderCode;
       const boxId = Math.floor(orderCode / 1_000_000);
 
-      const box = await this.prisma.box.findFirst({
-        where: { id: boxId },
-      });
-
-      if (!box) return { status: 'invalid' };
-
       if (body.success) {
         await this.billsService.paymentCash({
           boxId,
@@ -75,16 +69,6 @@ export class PayosController {
           amount: body.data.amount,
           boxId,
         });
-
-        const message = `
-      ✅ <code>THANH TOÁN THÀNH CÔNG</code>
-      🏠 Phòng: <code>${box.name}</code>
-      💰 Số tiền: <code>${body.data.amount.toLocaleString('vi-VN')} VNĐ</code>
-      💳 Hình thức: <b>Chuyển khoản</b>
-      🕒 <i>Thời gian: ${new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' })}</i>
-      `;
-
-        this.teleService.sendMessage(message);
       }
 
       return { status: 'success' };
