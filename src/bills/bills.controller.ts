@@ -29,4 +29,9 @@ export class BillsController {
   clearDiscountBill(@Body() body) {
     return this.billsService.clearDiscountBill(body);
   }
+
+  @Put('time-start')
+  changeTimeStart(@Body() body) {
+    return this.billsService.changeTimeStart(body);
+  }
 }

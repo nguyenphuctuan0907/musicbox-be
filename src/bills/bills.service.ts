@@ -4,11 +4,15 @@ import { Prisma } from 'generated/prisma/client';
 import { AppError } from 'libs/error/base.error';
 import { AppLogger } from 'libs/log/logger';
 import { PrismaService } from 'prisma/prisma.service';
+import { TeleService } from 'src/tele/tele.service';
 
 @Injectable()
 export class BillsService {
   private readonly logger = new AppLogger(BillsService.name);
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly teleService: TeleService,
+  ) {}
 
   /**
    * @param data - data to create a new bill
@@ -186,6 +190,16 @@ export class BillsService {
         },
       });
 
+      const message = `
+      ✅ <code>THANH TOÁN THÀNH CÔNG</code>
+      🏠 Phòng: <code>${box.name}</code>
+      💰 Số tiền: <code>${total.toLocaleString('vi-VN')} VNĐ</code>
+      💳 Hình thức: <b>${paymentMethod === 'CASH' ? 'Tiền mặt' : 'Chuyển khoản'}</b>
+      🕒 <i>Thời gian: ${new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' })}</i>
+      `;
+
+      this.teleService.sendMessage(message);
+
       return { ...res, name: box.name };
     } catch (err) {
       this.logger.error(`Lỗi server ${err}`);
@@ -321,6 +335,59 @@ export class BillsService {
           discountAmount: undefined,
           discountPercent: null,
           discountType: null,
+        },
+      });
+
+      return res;
+    } catch (error) {
+      this.logger.error(error || 'Lỗi cập nhật bill');
+      throw new AppError('Cập nhật bill thất bại', 500);
+    }
+  }
+
+  async changeTimeStart(payload: { boxId: number; start: Date }) {
+    const { boxId, start } = payload;
+    try {
+      const box = await this.prisma.box.findFirst({
+        where: { id: boxId },
+      });
+
+      if (!box) {
+        this.logger.error(`Box with id ${boxId} not found`);
+        throw new AppError(`Box with id ${boxId} not found`, 404);
+      }
+
+      // Tìm bill đang mở của phòng này
+      let bill = await this.prisma.bill.findFirst({
+        where: {
+          boxId: boxId,
+          status: { in: ['RUNNING', 'PAYING'] },
+        },
+      });
+
+      if (!bill) {
+        this.logger.error(`Box without bill with ${boxId} not found`);
+        throw new AppError(`Box without bill with ${boxId} not found`, 400);
+      }
+
+      await this.prisma.bill.update({
+        where: {
+          id: bill.id,
+        },
+        data: {
+          start,
+        },
+      });
+
+      const res = await this.prisma.bill.findUnique({
+        where: { id: bill.id, status: bill.status },
+        include: {
+          billdish: {
+            include: {
+              dish: true,
+            },
+          },
+          priceRule: true,
         },
       });
 
