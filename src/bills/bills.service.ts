@@ -345,7 +345,7 @@ export class BillsService {
     }
   }
 
-  async changeTimeStart(payload: { boxId: number; start: Date }) {
+  async changeTimeStart(payload: { boxId: number; start: number }) {
     const { boxId, start } = payload;
     try {
       const box = await this.prisma.box.findFirst({
@@ -375,7 +375,7 @@ export class BillsService {
           id: bill.id,
         },
         data: {
-          start,
+          start: new Date(start),
         },
       });
 
