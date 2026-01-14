@@ -1,9 +1,14 @@
-import { Body, Controller, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { BillsService } from './bills.service';
 
 @Controller('bill')
 export class BillsController {
   constructor(private readonly billsService: BillsService) {}
+
+  @Get('')
+  getBills(@Query('date') date?: string) {
+    return this.billsService.getBills({ date });
+  }
 
   @Post()
   updateStatusPaying(@Body() body) {
