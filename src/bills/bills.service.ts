@@ -91,7 +91,7 @@ export class BillsService {
         total: {
           gt: 5000,
         },
-        createdAt: {
+        end: {
           gte: startUtc,
           lte: endUtc,
         },
@@ -100,7 +100,7 @@ export class BillsService {
         box: true,
       },
       orderBy: {
-        createdAt: 'desc',
+        end: 'desc',
       },
     });
 
