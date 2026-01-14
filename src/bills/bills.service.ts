@@ -74,17 +74,18 @@ export class BillsService {
 
   getUtcRangeFromVnDate(date: string) {
     // date: YYYY-MM-DD (VN)
-    const startVN = new Date(`${date}T00:00:00`);
-    const endVN = new Date(`${date}T23:59:59.999`);
+    const startOfDay = new Date(`${date} 00:00:00`);
+    const endOfDay = new Date(`${date} 23:59:59.999`);
 
     return {
-      startUtc: new Date(startVN.getTime() - 7 * 60 * 60 * 1000),
-      endUtc: new Date(endVN.getTime() - 7 * 60 * 60 * 1000),
+      startUtc: startOfDay,
+      endUtc: endOfDay,
     };
   }
 
   async getBills({ date }): Promise<Bill[]> {
     const { startUtc, endUtc } = this.getUtcRangeFromVnDate(date);
+    console.log({ startUtc, endUtc });
 
     const bills = await this.prisma.bill.findMany({
       where: {
