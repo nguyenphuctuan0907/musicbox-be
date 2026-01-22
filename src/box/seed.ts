@@ -1,5 +1,11 @@
 export const DATA_DEFAULT = [
   {
+    name: 'Mang về',
+    defaultPricePerHour: 0,
+    size: 'SMALL',
+    status: 'AVAILABLE',
+  },
+  {
     name: 'Box 1',
     defaultPricePerHour: 0,
     size: 'SMALL',

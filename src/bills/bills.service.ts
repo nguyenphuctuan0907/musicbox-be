@@ -85,7 +85,6 @@ export class BillsService {
 
   async getBills({ date }): Promise<Bill[]> {
     const { startUtc, endUtc } = this.getUtcRangeFromVnDate(date);
-    console.log({ startUtc, endUtc });
 
     const bills = await this.prisma.bill.findMany({
       where: {
@@ -106,6 +105,28 @@ export class BillsService {
     });
 
     return bills;
+  }
+
+  async getBillById(id: string): Promise<Bill> {
+    const billId = parseInt(id, 10);
+    const res = await this.prisma.bill.findUnique({
+      where: { id: billId },
+      include: {
+        billdish: {
+          include: {
+            dish: true,
+          },
+        },
+        priceRule: true,
+      },
+    });
+
+    if (!res) {
+      this.logger.error(`Không tìm thấy bill với id: ${billId}`);
+      throw new AppError('Không tìm thấy bill', 404);
+    }
+
+    return res;
   }
 
   async getBillforBox(id: number): Promise<Bill | null> {

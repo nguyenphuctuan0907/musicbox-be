@@ -10,6 +10,11 @@ export class BillsController {
     return this.billsService.getBills({ date });
   }
 
+    @Get(':id')
+  getBillById(@Param('id') id: string) {
+    return this.billsService.getBillById(id);
+  }
+
   @Post()
   updateStatusPaying(@Body() body) {
     return this.billsService.updateStatusBill(body);
